@@ -50,7 +50,7 @@
          <padding> <Insets left="20.0" /> </padding>
       </Button>
 
-      <Button fx:id="btnMatch" alignment="BASELINE_LEFT" contentDisplay="LEFT" managed="false" mnemonicParsing="false" onAction="#goToMatchSuggestions" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent;" text="Match Suggestions" textFill="WHITE" visible="false">
+      <Button fx:id="btnMatch" alignment="BASELINE_LEFT" contentDisplay="LEFT" mnemonicParsing="false" onAction="#goToMatchSuggestions" prefHeight="45.0" prefWidth="220.0" style="-fx-background-color: transparent;" text="Match Suggestions" textFill="WHITE">
          <font> <Font size="15.0" /> </font>
          <graphic><ImageView fx:id="imgMatch" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true"><image><Image url="@../../assets/MatchSuggestion.png" /></image></ImageView></graphic>
          <padding> <Insets left="20.0" /> </padding>

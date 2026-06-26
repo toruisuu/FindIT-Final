@@ -145,24 +145,6 @@ public class ItemReportDAO {
         }
     }
 
-    public void restoreItem(ItemReport item) {
-        String restoreItemSql = "UPDATE items SET record_status = 'Active' WHERE item_id = ?";
-        String restoreClaimsSql = "UPDATE claims SET record_status = 'Active' WHERE item_id = ?";
-
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement itemStmt = conn.prepareStatement(restoreItemSql);
-             PreparedStatement claimsStmt = conn.prepareStatement(restoreClaimsSql)) {
-
-            itemStmt.setInt(1, item.getId());
-            itemStmt.executeUpdate();
-
-            claimsStmt.setInt(1, item.getId());
-            claimsStmt.executeUpdate();
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not restore item report.", e);
-        }
-    }
-
     public List<ItemReport> getArchivedItems() {
         List<ItemReport> archivedList = new ArrayList<>();
         // FIX 2: Added the JOINs so mapReport doesn't crash!
