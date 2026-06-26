@@ -39,12 +39,14 @@ public class ReportedItemsController implements Initializable {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> typeFilter;
     @FXML private ComboBox<String> viewToggle;
+    @FXML private Button archivedItemsButton;
     @FXML private Label lblTimestamp; // NEW: The Live Clock Label
     @FXML private TableView<ItemReport> itemsTable;
     
     @FXML private TableColumn<ItemReport, String> colType, colTrackingId, colItemName, colCategory, colDate, colReportedBy, colLocation, colAction;
 
     private FilteredList<ItemReport> filteredData;
+    private boolean showingArchived;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,28 +66,51 @@ public class ReportedItemsController implements Initializable {
         typeFilter.setItems(FXCollections.observableArrayList("All", "Lost", "Found"));
         typeFilter.getSelectionModel().selectFirst();
         
-        // Setup the new View Toggle
-        if (viewToggle != null) {
-            viewToggle.setItems(FXCollections.observableArrayList("Active Records", "Archived History"));
-            viewToggle.getSelectionModel().selectFirst();
-        }
+        updateArchiveButton();
 
         configureTableColumns();
         ResponsiveTable.fillAvailableWidth(itemsTable);
-        wireSearchAndFilter();
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+        typeFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+        refreshTableData();
         
         // 3. LISTEN FOR TOGGLE CHANGES (Active vs Archived)
         if (viewToggle != null) {
+            viewToggle.setItems(FXCollections.observableArrayList("Active Records", "Archived History"));
+            viewToggle.getSelectionModel().selectFirst();
             viewToggle.valueProperty().addListener((obs, oldVal, newVal) -> {
-                wireSearchAndFilter(); // Re-wire the table to the new list
-                
-                if ("Archived History".equals(newVal)) {
-                    // Make the table slightly grey to indicate it's the archive
-                    itemsTable.setStyle("-fx-control-inner-background: #f4f4f4;"); 
-                } else {
-                    itemsTable.setStyle("-fx-control-inner-background: #ffffff;");
-                }
+                showingArchived = "Archived History".equals(newVal);
+                refreshTableData();
+                updateArchiveButton();
             });
+        }
+    }
+
+    @FXML
+    private void handleToggleArchivedItems() {
+        showingArchived = !showingArchived;
+        if (viewToggle != null) {
+            viewToggle.setValue(showingArchived ? "Archived History" : "Active Records");
+        }
+        if (showingArchived) {
+            AppDataStore.refreshArchivedItems();
+        }
+        refreshTableData();
+        updateArchiveButton();
+        itemsTable.refresh();
+    }
+
+    private void updateArchiveButton() {
+        if (archivedItemsButton != null) {
+            archivedItemsButton.setText(showingArchived ? "Active Items" : "Archived Items");
+            archivedItemsButton.setStyle(showingArchived
+                    ? "-fx-background-color: #FFCC00; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #4A1212; -fx-font-weight: bold;"
+                    : "-fx-background-color: #800000; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;");
+        }
+        if (itemsTable != null) {
+            itemsTable.setStyle(showingArchived
+                    ? "-fx-control-inner-background: #f4f4f4;"
+                    : "-fx-control-inner-background: #ffffff;");
         }
     }
 
@@ -124,26 +149,34 @@ public class ReportedItemsController implements Initializable {
 
         colAction.setCellFactory(col -> new TableCell<ItemReport, String>() {
             private final Button viewBtn = new Button();
-            private final Button deleteBtn = new Button();
+            private final Button archiveBtn = new Button("Archive");
+            private final Button restoreBtn = new Button("Restore");
 
             {
                 ImageView eyeIcon = createIcon("/com/example/findit/assets/ViewEye.png");
-                ImageView trashIcon = createIcon("/com/example/findit/assets/trash.png");
 
                 viewBtn.setGraphic(eyeIcon);
-                deleteBtn.setGraphic(trashIcon);
                 String transparentStyle = "-fx-background-color: transparent; -fx-cursor: hand;";
                 viewBtn.setStyle(transparentStyle);
-                deleteBtn.setStyle(transparentStyle);
+                viewBtn.setTooltip(new Tooltip("View item details"));
+                archiveBtn.setStyle("-fx-background-color: #800000; -fx-background-radius: 7; -fx-cursor: hand; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-padding: 5 9 5 9;");
+                archiveBtn.setTooltip(new Tooltip("Move this item to archived items"));
+                restoreBtn.setStyle("-fx-background-color: #FFCC00; -fx-background-radius: 7; -fx-cursor: hand; -fx-text-fill: #4A1212; -fx-font-weight: bold; -fx-padding: 5 9 5 9;");
+                restoreBtn.setTooltip(new Tooltip("Bring this item back to active items"));
 
                 viewBtn.setOnAction(e -> {
                     ItemReport item = getTableView().getItems().get(getIndex());
                     handleViewItem(item);
                 });
 
-                deleteBtn.setOnAction(e -> {
+                archiveBtn.setOnAction(e -> {
                     ItemReport item = getTableView().getItems().get(getIndex());
-                    handleDeleteItem(item);
+                    handleArchiveItem(item);
+                });
+
+                restoreBtn.setOnAction(e -> {
+                    ItemReport item = getTableView().getItems().get(getIndex());
+                    handleRestoreItem(item);
                 });
             }
 
@@ -158,10 +191,12 @@ public class ReportedItemsController implements Initializable {
                     actionBox.setMaxWidth(Double.MAX_VALUE);
                     
                     actionBox.getChildren().add(viewBtn);
-                    boolean isArchived = viewToggle != null && "Archived History".equals(viewToggle.getValue());
+                    boolean isArchived = showingArchived;
                     
-                    if (!isArchived) {
-                        actionBox.getChildren().add(deleteBtn);
+                    if (isArchived) {
+                        actionBox.getChildren().add(restoreBtn);
+                    } else {
+                        actionBox.getChildren().add(archiveBtn);
                     }
 
                     setGraphic(actionBox);
@@ -184,25 +219,22 @@ public class ReportedItemsController implements Initializable {
         return imgView;
     }
 
-    private void wireSearchAndFilter() {
-        // Determine which list to use based on the viewToggle!
-        boolean isArchived = viewToggle != null && "Archived History".equals(viewToggle.getValue());
+    private void refreshTableData() {
+        boolean isArchived = showingArchived;
         ObservableList<ItemReport> sourceList = isArchived ? AppDataStore.ARCHIVED_ITEMS : AppDataStore.getItemReports();
 
-        // Wrap the selected list in a FilteredList
         filteredData = new FilteredList<>(sourceList, p -> true);
         itemsTable.setItems(filteredData);
-
-        // Clear old listeners and add new ones
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
-        typeFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilter());
         
-        applyFilter(); // Apply immediately to refresh
+        applyFilter();
     }
 
     private void applyFilter() {
         String search = searchField.getText() == null ? "" : searchField.getText().toLowerCase().trim();
         String typeValue = typeFilter.getValue();
+        if (filteredData == null) {
+            return;
+        }
 
         filteredData.setPredicate(item -> {
             boolean matchesSearch = search.isEmpty()
@@ -320,21 +352,36 @@ public class ReportedItemsController implements Initializable {
         return value == null || value.isBlank() ? "N/A" : value;
     }
 
-    private void handleDeleteItem(ItemReport item) {
-        if (viewToggle != null && "Archived History".equals(viewToggle.getValue())) {
+    private void handleArchiveItem(ItemReport item) {
+        if (showingArchived) {
             System.out.println("Item is already archived. Action blocked.");
             return; // Instantly stops the method!
         }
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Archive Confirmation");
-        confirmDialog.setHeaderText("Dispose / Archive Report: " + item.getItemName());
+        confirmDialog.setHeaderText("Archive Report: " + item.getItemName());
         confirmDialog.setContentText("Are you sure you want to archive this item? It will be removed from the active board but kept in the database history.");
         
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 AppDataStore.archiveItemReport(item);
                 
-                wireSearchAndFilter(); 
+                refreshTableData();
+            }
+        });
+    }
+
+    private void handleRestoreItem(ItemReport item) {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Restore Confirmation");
+        confirmDialog.setHeaderText("Restore Item: " + item.getItemName());
+        confirmDialog.setContentText("Bring this item back to the active reported items list?");
+
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                AppDataStore.restoreItemReport(item);
+                AppDataStore.refreshArchivedItems();
+                refreshTableData();
             }
         });
     }

@@ -149,7 +149,7 @@ public class ItemDetailsController {
     public void handleDeleteItem(ActionEvent event) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Archive Item");
-        confirm.setHeaderText("Dispose / Archive this Record");
+        confirm.setHeaderText("Archive this Record");
         confirm.setContentText("Are you sure you want to archive this item? It will be removed from the public board but kept in the database history.");
         
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {

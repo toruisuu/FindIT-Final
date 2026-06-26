@@ -2,6 +2,7 @@ package com.example.findit.controllers.admin;
 
 import com.example.findit.model.AppDataStore;
 import com.example.findit.model.ClaimRequest;
+import com.example.findit.model.ItemMatch;
 import com.example.findit.model.ItemReport;
 import com.example.findit.util.ImageStorage;
 import com.example.findit.util.toast;
@@ -10,9 +11,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -23,8 +27,11 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class ClaimsController implements Initializable {
 
@@ -33,6 +40,7 @@ public class ClaimsController implements Initializable {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> statusFilter;
     @FXML private ComboBox<String> viewToggle;
+    @FXML private Button archivedItemsButton;
 
     @FXML private TableView<ClaimRow> claimsTable;
     
@@ -41,6 +49,7 @@ public class ClaimsController implements Initializable {
 
     private final ObservableList<ClaimRow> masterData = FXCollections.observableArrayList();
     private FilteredList<ClaimRow> filteredData;
+    private boolean showingArchived;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,18 +57,16 @@ public class ClaimsController implements Initializable {
         
         statusFilter.setItems(FXCollections.observableArrayList("All Status", "Pending", "Approved", "Rejected"));
         statusFilter.getSelectionModel().selectFirst();
+        updateArchiveButton();
         
         if (viewToggle != null) {
             viewToggle.setItems(FXCollections.observableArrayList("Active Claims", "Archived History"));
             viewToggle.getSelectionModel().selectFirst();
             
             viewToggle.valueProperty().addListener((obs, oldVal, newVal) -> {
+                showingArchived = "Archived History".equals(newVal);
                 refreshTableData();
-                if ("Archived History".equals(newVal)) {
-                    claimsTable.setStyle("-fx-control-inner-background: #f4f4f4;"); 
-                } else {
-                    claimsTable.setStyle("-fx-control-inner-background: #ffffff;");
-                }
+                updateArchiveButton();
                 claimsTable.refresh();
             });
         }
@@ -70,10 +77,38 @@ public class ClaimsController implements Initializable {
         wireSearchAndFilter();
         
         AppDataStore.getClaimRequests().addListener((javafx.collections.ListChangeListener<ClaimRequest>) change -> {
-            if (viewToggle == null || "Active Claims".equals(viewToggle.getValue())) {
+            if (!showingArchived) {
                 refreshTableData();
             }
         });
+    }
+
+    @FXML
+    private void handleToggleArchivedItems() {
+        showingArchived = !showingArchived;
+        if (viewToggle != null) {
+            viewToggle.setValue(showingArchived ? "Archived History" : "Active Claims");
+        }
+        if (showingArchived) {
+            AppDataStore.refreshArchivedClaims();
+        }
+        refreshTableData();
+        updateArchiveButton();
+        claimsTable.refresh();
+    }
+
+    private void updateArchiveButton() {
+        if (archivedItemsButton != null) {
+            archivedItemsButton.setText(showingArchived ? "Active Claims" : "Archived Claims");
+            archivedItemsButton.setStyle(showingArchived
+                    ? "-fx-background-color: #FFCC00; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #4A1212; -fx-font-weight: bold;"
+                    : "-fx-background-color: #800000; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;");
+        }
+        if (claimsTable != null) {
+            claimsTable.setStyle(showingArchived
+                    ? "-fx-control-inner-background: #f4f4f4;"
+                    : "-fx-control-inner-background: #ffffff;");
+        }
     }
 
     private void configureTableColumns() {
@@ -108,25 +143,27 @@ public class ClaimsController implements Initializable {
         colAction.setCellFactory(col -> new TableCell<ClaimRow, String>() {
             private final Button approveBtn = new Button();
             private final Button rejectBtn  = new Button();
-            private final Button archiveBtn = new Button();
+            private final Button archiveBtn = new Button("Archive");
+            private final Button restoreBtn = new Button("Restore");
             private final Button viewBtn    = new Button();
 
             {
                 approveBtn.setGraphic(createIcon("/com/example/findit/assets/check.png"));
                 rejectBtn.setGraphic(createIcon("/com/example/findit/assets/ekis.png"));
-                archiveBtn.setGraphic(createIcon("/com/example/findit/assets/trash.png"));
                 viewBtn.setGraphic(createIcon("/com/example/findit/assets/ViewEye.png"));
 
                 String transparentStyle = "-fx-background-color: transparent; -fx-cursor: hand;";
                 approveBtn.setStyle(transparentStyle);
                 rejectBtn.setStyle(transparentStyle);
-                archiveBtn.setStyle(transparentStyle);
                 viewBtn.setStyle(transparentStyle);
+                archiveBtn.setStyle("-fx-background-color: #800000; -fx-background-radius: 7; -fx-cursor: hand; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-padding: 5 9 5 9;");
+                restoreBtn.setStyle("-fx-background-color: #FFCC00; -fx-background-radius: 7; -fx-cursor: hand; -fx-text-fill: #4A1212; -fx-font-weight: bold; -fx-padding: 5 9 5 9;");
 
                 approveBtn.setOnAction(e -> handleApprove(getTableView().getItems().get(getIndex())));
                 rejectBtn.setOnAction(e  -> handleReject(getTableView().getItems().get(getIndex())));
                 archiveBtn.setOnAction(e -> handleArchiveClaim(getTableView().getItems().get(getIndex())));
                 viewBtn.setOnAction(e -> showClaimDetails(getTableView().getItems().get(getIndex()), "Claim Details"));
+                restoreBtn.setOnAction(e -> handleRestoreClaim(getTableView().getItems().get(getIndex())));
             }
 
             @Override
@@ -139,10 +176,10 @@ public class ClaimsController implements Initializable {
                     javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(2);
                     box.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-                    boolean isArchived = viewToggle != null && "Archived History".equals(viewToggle.getValue());
+                    boolean isArchived = showingArchived;
 
                     if (isArchived) {
-                        box.getChildren().addAll(viewBtn);
+                        box.getChildren().addAll(viewBtn, restoreBtn);
                     } else {
                         if ("Pending".equalsIgnoreCase(row.getClaimStatus())) {
                             box.getChildren().addAll(approveBtn, rejectBtn, archiveBtn);
@@ -157,7 +194,7 @@ public class ClaimsController implements Initializable {
     }
 
     private void refreshTableData() {
-        boolean isArchived = viewToggle != null && "Archived History".equals(viewToggle.getValue());
+        boolean isArchived = showingArchived;
         ObservableList<ClaimRequest> sourceList = isArchived ? AppDataStore.ARCHIVED_CLAIMS : AppDataStore.getClaimRequests();
         
         masterData.setAll(sourceList.stream()
@@ -172,7 +209,7 @@ public class ClaimsController implements Initializable {
     private void handleArchiveClaim(ClaimRow item) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Archive Claim Confirmation");
-        confirmDialog.setHeaderText("Dispose / Archive Claim: " + item.getItemName());
+        confirmDialog.setHeaderText("Archive Claim: " + item.getItemName());
         confirmDialog.setContentText("Are you sure you want to archive this claim request? It will be moved to the history logs.");
         confirmDialog.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -180,6 +217,136 @@ public class ClaimsController implements Initializable {
                 refreshTableData();
             }
         });
+    }
+
+    private void handleRestoreClaim(ClaimRow item) {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Restore Claim Confirmation");
+        confirmDialog.setHeaderText("Restore Claim: " + item.getItemName());
+        confirmDialog.setContentText("Bring this claim request back to the active claims list?");
+        confirmDialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                AppDataStore.restoreClaimRequest(item.getRequest());
+                AppDataStore.refreshArchivedClaims();
+                refreshTableData();
+            }
+        });
+    }
+
+    @FXML
+    private void handleShowMatchSuggestions() {
+        AppDataStore.refreshAll();
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Match Suggestions");
+        dialog.setHeaderText("Potential lost and found matches");
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.getDialogPane().setPrefWidth(760);
+
+        VBox list = new VBox(14);
+        list.setPadding(new Insets(10));
+
+        var matches = AppDataStore.getMatchSuggestions().stream().toList();
+        if (matches.isEmpty()) {
+            Label empty = new Label("No match suggestions available.");
+            empty.setStyle("-fx-text-fill: #777777; -fx-font-size: 15;");
+            list.getChildren().add(empty);
+        } else {
+            for (ItemMatch match : matches) {
+                list.getChildren().add(createMatchSuggestionCard(match, dialog));
+            }
+        }
+
+        ScrollPane scrollPane = new ScrollPane(list);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(460);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        dialog.getDialogPane().setContent(scrollPane);
+        dialog.showAndWait();
+        refreshTableData();
+    }
+
+    private VBox createMatchSuggestionCard(ItemMatch match, Dialog<ButtonType> parentDialog) {
+        VBox card = new VBox(12);
+        card.setPadding(new Insets(16));
+        card.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-color: #E6E6E6; -fx-border-radius: 10;");
+
+        Label title = new Label("Potential Match");
+        title.setStyle("-fx-text-fill: #4A1212; -fx-font-weight: bold; -fx-font-size: 16;");
+
+        Label status = new Label(match.getStatus());
+        status.setStyle("-fx-background-color: #FFE0B2; -fx-background-radius: 12; -fx-text-fill: #E65100; -fx-font-weight: bold; -fx-padding: 3 10 3 10;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox header = new HBox(title, spacer, status);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        HBox comparison = new HBox(14,
+                createMatchItemSummary(match.getLostItem()),
+                createMatchItemSummary(match.getFoundItem())
+        );
+
+        Button detailsButton = new Button("View Match Details");
+        detailsButton.setMaxWidth(Double.MAX_VALUE);
+        detailsButton.setPrefHeight(38);
+        detailsButton.setStyle("-fx-background-color: #800000; -fx-background-radius: 8; -fx-cursor: hand; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;");
+        detailsButton.setOnAction(event -> {
+            openMatchDetail(match);
+            parentDialog.close();
+            refreshTableData();
+        });
+
+        card.getChildren().addAll(header, comparison, detailsButton);
+        return card;
+    }
+
+    private VBox createMatchItemSummary(ItemReport item) {
+        VBox box = new VBox(5);
+        box.setPrefWidth(320);
+        box.setPadding(new Insets(10, 12, 10, 12));
+        box.setStyle("Lost".equalsIgnoreCase(item.getType())
+                ? "-fx-border-color: #FFCDD2; -fx-border-radius: 8; -fx-border-width: 1.5;"
+                : "-fx-border-color: #A5D6A7; -fx-border-radius: 8; -fx-border-width: 1.5;");
+        HBox.setHgrow(box, Priority.ALWAYS);
+
+        Label type = new Label(item.getType().toUpperCase() + " ITEM");
+        type.setStyle("Lost".equalsIgnoreCase(item.getType())
+                ? "-fx-text-fill: #E53935; -fx-font-weight: bold; -fx-font-size: 10;"
+                : "-fx-text-fill: #43A047; -fx-font-weight: bold; -fx-font-size: 10;");
+        Label name = new Label(item.getItemName());
+        name.setWrapText(true);
+        name.setStyle("-fx-text-fill: #222222; -fx-font-weight: bold;");
+        Label reporter = new Label("Reported by: " + safe(item.getReportedBy()));
+        reporter.setWrapText(true);
+        reporter.setStyle("-fx-text-fill: #777777; -fx-font-size: 12;");
+
+        box.getChildren().addAll(type, name, reporter);
+        return box;
+    }
+
+    private void openMatchDetail(ItemMatch match) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/findit/views/admin/MatchSuggestion.fxml"));
+            Parent root = loader.load();
+
+            MatchSuggestionController controller = loader.getController();
+            controller.loadMatch(match);
+
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            if (claimsTable.getScene() != null) {
+                dialog.initOwner(claimsTable.getScene().getWindow());
+            }
+            dialog.setTitle("Match Details");
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Match Suggestions");
+            alert.setHeaderText(null);
+            alert.setContentText("Could not open the match details.");
+            alert.showAndWait();
+        }
     }
 
     private void wireSearchAndFilter() {
@@ -267,7 +434,7 @@ public class ClaimsController implements Initializable {
         ButtonType approveBtn = new ButtonType("Change to Approved", ButtonBar.ButtonData.OTHER);
         ButtonType rejectBtn = new ButtonType("Change to Rejected", ButtonBar.ButtonData.OTHER);
 
-        boolean isArchived = viewToggle != null && "Archived History".equals(viewToggle.getValue());
+        boolean isArchived = showingArchived;
         
         if (!isArchived) {
             if (currentStatus.equalsIgnoreCase("Approved")) {

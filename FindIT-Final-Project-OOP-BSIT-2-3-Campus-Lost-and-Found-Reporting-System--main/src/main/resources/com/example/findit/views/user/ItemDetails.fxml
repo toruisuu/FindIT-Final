@@ -65,7 +65,7 @@
                   <Button fx:id="btnClaimItem" mnemonicParsing="false" onAction="#handleClaimItem" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #800000; -fx-background-radius: 8; -fx-cursor: hand;" text="Claim Item" textFill="WHITE"><font><Font name="System Bold" size="14.0" /></font></Button>
                   
                   <Button fx:id="btnEditItem" mnemonicParsing="false" onAction="#handleEditItem" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #FFCC00; -fx-background-radius: 8; -fx-cursor: hand;" text="Edit Details" textFill="#800000" visible="false" managed="false"><font><Font name="System Bold" size="14.0" /></font></Button>
-                  <Button fx:id="btnDeleteItem" mnemonicParsing="false" onAction="#handleDeleteItem" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #C62828; -fx-background-radius: 8; -fx-cursor: hand;" text="Delete Item" textFill="WHITE" visible="false" managed="false"><font><Font name="System Bold" size="14.0" /></font></Button>
+                  <Button fx:id="btnDeleteItem" mnemonicParsing="false" onAction="#handleDeleteItem" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #800000; -fx-background-radius: 8; -fx-cursor: hand;" text="Archive Item" textFill="WHITE" visible="false" managed="false"><font><Font name="System Bold" size="14.0" /></font></Button>
                   
                   <Button mnemonicParsing="false" onAction="#handleClose" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #CCCCCC; -fx-background-radius: 8; -fx-cursor: hand;" text="Close"><font><Font name="System Bold" size="14.0" /></font></Button>
                </children>
