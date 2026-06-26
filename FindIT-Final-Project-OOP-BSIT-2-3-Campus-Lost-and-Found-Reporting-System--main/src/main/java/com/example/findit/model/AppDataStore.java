@@ -17,6 +17,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 public final class AppDataStore {
     private static final long REALTIME_REFRESH_SECONDS = 2;
@@ -44,6 +47,8 @@ public final class AppDataStore {
     static {
         refreshAll();
         startRealtimeUpdates();
+        disposeUnclaimedItems();
+        refreshArchivedItems();
     }
 
     private AppDataStore() {
@@ -186,8 +191,6 @@ public final class AppDataStore {
         try {
             ITEM_REPORTS.setAll(ITEM_REPORT_DAO.findAll());
             CLAIM_REQUESTS.setAll(CLAIM_REQUEST_DAO.findAll());
-            refreshArchivedItems();
-            refreshArchivedClaims();
             refreshMatchSuggestions();
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
@@ -251,11 +254,12 @@ public final class AppDataStore {
                             "Pending"
                     );
                     ClaimRequest autoMatchClaim = findAutoMatchClaim(match);
+                    ClaimRequest relatedClaim = autoMatchClaim != null ? autoMatchClaim : findLatestClaimForItem(foundItem);
                     if (autoMatchClaim != null && "Rejected".equalsIgnoreCase(autoMatchClaim.getStatus())) {
                         continue;
                     }
-                    if (hasApprovedClaimForItem(foundItem)) {
-                        continue;
+                    if (relatedClaim != null && "Approved".equalsIgnoreCase(relatedClaim.getStatus())) {
+                        match.setStatus("Confirmed");
                     }
                     matches.add(match);
                 }
@@ -346,10 +350,11 @@ public final class AppDataStore {
                 .orElse(null);
     }
 
-    private static boolean hasApprovedClaimForItem(ItemReport item) {
+    private static ClaimRequest findLatestClaimForItem(ItemReport item) {
         return CLAIM_REQUESTS.stream()
                 .filter(claim -> claim.getItem().getId() == item.getId())
-                .anyMatch(claim -> "Approved".equalsIgnoreCase(claim.getStatus()));
+                .findFirst()
+                .orElse(null);
     }
 
     private static String autoMatchStudentNumber(ItemMatch match) {
@@ -373,8 +378,6 @@ public final class AppDataStore {
         try {
             List<ItemReport> latestItems = ITEM_REPORT_DAO.findAll();
             List<ClaimRequest> latestClaims = CLAIM_REQUEST_DAO.findAll();
-            List<ItemReport> latestArchivedItems = ITEM_REPORT_DAO.getArchivedItems();
-            List<ClaimRequest> latestArchivedClaims = CLAIM_REQUEST_DAO.getArchivedClaims();
 
             Platform.runLater(() -> {
                 if (refreshVersion != LOCAL_CHANGE_VERSION.get()) {
@@ -382,8 +385,6 @@ public final class AppDataStore {
                 }
 
                 boolean changed = syncItemReports(latestItems) | syncClaimRequests(latestClaims);
-                syncArchivedItems(latestArchivedItems);
-                syncArchivedClaims(latestArchivedClaims);
                 if (changed) {
                     refreshMatchSuggestions();
                 }
@@ -412,24 +413,6 @@ public final class AppDataStore {
         }
 
         CLAIM_REQUESTS.setAll(latestClaims);
-        return true;
-    }
-
-    private static boolean syncArchivedItems(List<ItemReport> latestItems) {
-        if (sameItemReports(ARCHIVED_ITEMS, latestItems)) {
-            return false;
-        }
-
-        ARCHIVED_ITEMS.setAll(latestItems);
-        return true;
-    }
-
-    private static boolean syncArchivedClaims(List<ClaimRequest> latestClaims) {
-        if (sameClaimRequests(ARCHIVED_CLAIMS, latestClaims)) {
-            return false;
-        }
-
-        ARCHIVED_CLAIMS.setAll(latestClaims);
         return true;
     }
 
@@ -527,41 +510,58 @@ public final class AppDataStore {
     public static void archiveItemReport(ItemReport item) {
         ITEM_REPORT_DAO.archiveItem(item);
         ITEM_REPORTS.remove(item);  
-        refreshArchivedItems();
+        if (!ARCHIVED_ITEMS.contains(item)) {
+            ARCHIVED_ITEMS.add(item);          
+        }
         CLAIM_REQUESTS.removeIf(claim -> claim.getItem().getId() == item.getId());
-        refreshArchivedClaims();
-        markLocalChange();
         refreshMatchSuggestions();
     }
 
     public static void archiveClaimRequest(ClaimRequest claim) {
         CLAIM_REQUEST_DAO.archiveClaim(claim); 
         CLAIM_REQUESTS.remove(claim);          
-        refreshArchivedClaims();
-        markLocalChange();
+        
+        if (!ARCHIVED_CLAIMS.contains(claim)) {
+            ARCHIVED_CLAIMS.add(claim);        
+        }
         refreshMatchSuggestions();
     }
 
-    public static void restoreItemReport(ItemReport item) {
-        ITEM_REPORT_DAO.restoreItem(item);
-        ARCHIVED_ITEMS.remove(item);
-        refreshAll();
-        markLocalChange();
-    }
+    public static int disposeUnclaimedItems() {
+        int archivedCount = 0;
+        LocalDate today = LocalDate.now();
+        List<ItemReport> itemsToDispose = new ArrayList<>();
 
-    public static void restoreClaimRequest(ClaimRequest claim) {
-        CLAIM_REQUEST_DAO.restoreClaim(claim);
-        ARCHIVED_CLAIMS.remove(claim);
-        refreshAll();
-        markLocalChange();
+        for (ItemReport item : ITEM_REPORTS) {
+            if ("Found".equalsIgnoreCase(item.getType())) {
+                try {
+                    LocalDate itemDate = LocalDate.parse(item.getDate());
+                    long daysOld = ChronoUnit.DAYS.between(itemDate, today);
+
+                    if (daysOld > 60) {
+                        boolean isClaimed = CLAIM_REQUESTS.stream()
+                                .anyMatch(claim -> claim.getItem().getId() == item.getId() 
+                                                && "Approved".equalsIgnoreCase(claim.getStatus()));
+
+                        if (!isClaimed) {
+                            itemsToDispose.add(item);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Date parse error for item: " + item.getId());
+                }
+            }
+        }
+
+        for (ItemReport item : itemsToDispose) {
+            archiveItemReport(item); 
+            archivedCount++;
+        }
+        return archivedCount;
     }
 
     public static void refreshArchivedItems() {
         ARCHIVED_ITEMS.setAll(ITEM_REPORT_DAO.getArchivedItems());
-    }
-
-    public static void refreshArchivedClaims() {
-        ARCHIVED_CLAIMS.setAll(CLAIM_REQUEST_DAO.getArchivedClaims());
     }
 
     private static String buildClaimValidationRemarks(ClaimRequest request, String status, User admin) {

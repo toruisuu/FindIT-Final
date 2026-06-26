@@ -142,17 +142,6 @@ public class ClaimRequestDAO {
         }
     }
 
-    public void restoreClaim(ClaimRequest claim) {
-        String sql = "UPDATE claims SET record_status = 'Active' WHERE claim_id = ?";
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, claim.getId());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not restore claim request.", e);
-        }
-    }
-
     public List<ClaimRequest> getArchivedClaims() {
         List<ClaimRequest> archivedList = new java.util.ArrayList<>();
         

@@ -125,7 +125,7 @@ public class LostFormController {
         idField.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-alignment: center; -fx-background-color: #F0F0F0;");
 
         VBox layout = new VBox(15, 
-            new Label("Keep this ID to edit or archive your report later."),
+            new Label("Keep this ID to edit or delete your report later."),
             new Label("Please screenshot or take a picture of this tracking ID before tapping Done."),
             idField
         );
