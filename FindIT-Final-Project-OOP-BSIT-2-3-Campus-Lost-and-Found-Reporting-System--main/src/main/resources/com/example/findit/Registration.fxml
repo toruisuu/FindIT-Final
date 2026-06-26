@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.findit.controller.RegistrationController"
+      alignment="CENTER"
+      spacing="15"
+      style="-fx-background-color: #ffffff; -fx-padding: 40;">
+
+    <Label text="Create an Account"
+           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #7B0000;"/>
+
+    <Label text="Please fill in all the details below."
+           style="-fx-font-size: 13px; -fx-text-fill: #555555;"/>
+
+    <VBox spacing="4">
+        <Label text="Student / Staff ID Number *"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+        <TextField fx:id="idNumberField"
+                   promptText="e.g., SC12345"
+                   style="-fx-pref-width: 350px;"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Full Name *"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+        <TextField fx:id="fullNameField"
+                   promptText="Enter your full name"
+                   style="-fx-pref-width: 350px;"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Contact Number *"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+        <TextField fx:id="contactNumberField"
+                   promptText="Email or phone number"
+                   style="-fx-pref-width: 350px;"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Password *"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+        <PasswordField fx:id="passwordField"
+                       promptText="Minimum 6 characters"
+                       style="-fx-pref-width: 350px;"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Confirm Password *"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+        <PasswordField fx:id="confirmPasswordField"
+                       promptText="Re-enter your password"
+                       style="-fx-pref-width: 350px;"/>
+    </VBox>
+
+    <Label fx:id="messageLabel" text=""
+           style="-fx-font-size: 12px;"/>
+
+    <HBox spacing="12" alignment="CENTER">
+        <Button text="Register"
+                onAction="#handleRegister"
+                style="-fx-background-color: #7B0000; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-pref-width: 160px; -fx-pref-height: 35px;
+                       -fx-cursor: hand;"/>
+        <Button text="Clear"
+                onAction="#handleClear"
+                style="-fx-background-color: #cccccc; -fx-text-fill: #333333;
+                       -fx-pref-width: 160px; -fx-pref-height: 35px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+</VBox>

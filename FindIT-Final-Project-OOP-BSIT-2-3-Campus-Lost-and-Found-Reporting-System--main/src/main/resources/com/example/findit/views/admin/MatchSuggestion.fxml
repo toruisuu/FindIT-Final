@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="920.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.admin.MatchSuggestionController">
+   <children>
+      <VBox layoutX="35.0" layoutY="30.0" prefHeight="590.0" prefWidth="850.0" spacing="15.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 18;" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="30.0">
+         <padding>
+            <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
+         </padding>
+         <children>
+            
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label text="Match Comparison" textFill="#4A1212">
+                     <font><Font name="System Bold" size="24.0" /></font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="statusBadge" alignment="CENTER" prefHeight="22.0" prefWidth="75.0" style="-fx-background-color: #FFE0B2; -fx-background-radius: 12; -fx-text-fill: #E65100;" text="Pending">
+                     <font><Font name="System Bold" size="11.0" /></font>
+                  </Label>
+               </children>
+            </HBox>
+            
+            <HBox spacing="25.0" VBox.vgrow="ALWAYS">
+               <children>
+                  
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Lost Item" textFill="#D32F2F">
+                           <font><Font name="System Bold" size="16.0" /></font>
+                        </Label>
+                        <VBox fx:id="lostImageBox" alignment="CENTER" prefHeight="195.0" style="-fx-background-color: #F0F0F3; -fx-background-radius: 10;" VBox.vgrow="ALWAYS" />
+                        <VBox spacing="4.0">
+                           <children>
+                              <Label fx:id="lostItemName" text="Item Name" textFill="#222222"><font><Font name="System Bold" size="14.0" /></font></Label>
+                              <Label fx:id="lostCategory" text="Category:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="lostReportedBy" text="Reported by:" textFill="#777777"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="lostContact" text="Contact:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="lostDate" text="Date:" textFill="#777777"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="lostLocation" text="Location:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="lostDescription" text="Description:" textFill="#555555" wrapText="true"><font><Font size="12.0" /></font></Label>
+                           </children>
+                           <padding><Insets left="2.0" /></padding>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Found Item" textFill="#2E7D32">
+                           <font><Font name="System Bold" size="16.0" /></font>
+                        </Label>
+                        <VBox fx:id="foundImageBox" alignment="CENTER" prefHeight="195.0" style="-fx-background-color: #F0F0F3; -fx-background-radius: 10;" VBox.vgrow="ALWAYS" />
+                        <VBox spacing="4.0">
+                           <children>
+                              <Label fx:id="foundItemName" text="Item Name" textFill="#222222"><font><Font name="System Bold" size="14.0" /></font></Label>
+                              <Label fx:id="foundCategory" text="Category:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="foundReportedBy" text="Reported by:" textFill="#777777"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="foundContact" text="Contact:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="foundDate" text="Date:" textFill="#777777"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="foundLocation" text="Location:" textFill="#777777" wrapText="true"><font><Font size="12.0" /></font></Label>
+                              <Label fx:id="foundDescription" text="Description:" textFill="#555555" wrapText="true"><font><Font size="12.0" /></font></Label>
+                           </children>
+                           <padding><Insets left="2.0" /></padding>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  
+               </children>
+               <VBox.margin><Insets top="5.0" /></VBox.margin>
+            </HBox>
+            
+            <HBox alignment="CENTER" spacing="20.0" prefHeight="45.0">
+               <VBox.margin><Insets top="15.0" /></VBox.margin>
+               <children>
+                  <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#handleConfirmMatch" prefHeight="44.0" prefWidth="190.0" style="-fx-background-color: #00E676; -fx-background-radius: 8; -fx-cursor: hand;" text="Confirm Match" textFill="WHITE">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Button>
+                  <Button fx:id="declineButton" mnemonicParsing="false" onAction="#handleDeclineMatch" prefHeight="44.0" prefWidth="190.0" style="-fx-background-color: #D32F2F; -fx-background-radius: 8; -fx-cursor: hand;" text="Decline Match" textFill="WHITE">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#handleClose" prefHeight="44.0" prefWidth="190.0" style="-fx-background-color: #EFEFEF; -fx-background-radius: 8; -fx-cursor: hand;" text="Close" textFill="#333333">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Button>
+               </children>
+            </HBox>
+            
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

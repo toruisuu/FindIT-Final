@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #F5F5F7;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.admin.ReportedItemsController">
+   
+   <left>
+      <fx:include source="AdminDashboardSidebar.fxml" fx:id="sidebar" />
+   </left>
+   
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <!-- TOP MAROON HEADER WITH LIVE TIMESTAMP -->
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #800000; -fx-padding: 0 30 0 0;">
+               <children>
+                  <Label text="Reported Items" textFill="#FFCC00">
+                     <font><Font name="System Bold" size="26.0" /></font>
+                     <HBox.margin><Insets left="30.0" /></HBox.margin>
+                  </Label>
+                  
+                  <!-- Spacer to push the clock to the far right -->
+                  <Region HBox.hgrow="ALWAYS" />
+                  
+                  <!-- Live Timestamp Label -->
+                  <Label fx:id="lblTimestamp" text="Loading time..." textFill="WHITE">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Label>
+               </children>
+            </HBox>
+            
+            <VBox spacing="20.0" VBox.vgrow="ALWAYS">
+               <padding><Insets bottom="25.0" left="30.0" right="30.0" top="25.0" /></padding>
+               <children>
+                  
+                  <!-- FILTER BAR WITH NEW ARCHIVE TOGGLE -->
+                  <HBox alignment="CENTER_LEFT" prefHeight="75.0" spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 8, 0, 0, 4);">
+                     <padding><Insets left="20.0" right="20.0" /></padding>
+                     <children>
+                        <TextField fx:id="searchField" prefHeight="38.0" promptText="Search items ..." style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="typeFilter" prefHeight="38.0" prefWidth="200.0" promptText="Type" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                        
+                        <!-- Archive / Active Records Toggle -->
+                        <ComboBox fx:id="viewToggle" prefHeight="38.0" prefWidth="200.0" promptText="View Records" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                     </children>
+                  </HBox>
+                  
+                  <!-- TABLE CONTAINER -->
+                  <VBox style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                     <children>
+                        <TableView fx:id="itemsTable" style="-fx-background-color: transparent; -fx-base: #FFFFFF;" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="colType" prefWidth="95.0" text="Type" />
+                            <TableColumn fx:id="colTrackingId" prefWidth="120.0" text="Tracking ID" />
+                            <TableColumn fx:id="colItemName" prefWidth="140.0" text="Item Name" />
+                              <TableColumn fx:id="colCategory" prefWidth="130.0" text="Category" />
+                              <TableColumn fx:id="colDate" prefWidth="120.0" text="Date" />
+                              <TableColumn fx:id="colReportedBy" prefWidth="140.0" text="Reported by" />
+                              <TableColumn fx:id="colLocation" prefWidth="140.0" text="Location" />
+                              <TableColumn fx:id="colAction" prefWidth="120.0" text="Action" />
+                          </columns>
+                           <VBox.margin><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></VBox.margin>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

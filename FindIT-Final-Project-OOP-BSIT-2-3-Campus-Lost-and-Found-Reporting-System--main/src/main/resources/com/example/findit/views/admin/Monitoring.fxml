@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.findit.controllers.admin.MonitoringController"
+            style="-fx-background-color: #F5F5F5;">
+
+    <left>
+        <fx:include fx:id="sidebar" source="AdminDashboardSidebar.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 30;">
+                <Label text="Monitoring"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;"/>
+
+                <HBox spacing="16">
+                    <VBox maxWidth="1.7976931348623157E308" prefWidth="210" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 16; -fx-effect: dropshadow(gaussian,#0001,6,0,0,2);">
+                        <Label text="Total Items" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblTotalItems" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;"/>
+                        <Label text="MONITORED" style="-fx-text-fill: #1A1A2E; -fx-font-size: 11px;"/>
+                    </VBox>
+                    <VBox maxWidth="1.7976931348623157E308" prefWidth="210" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 16; -fx-effect: dropshadow(gaussian,#0001,6,0,0,2);">
+                        <Label text="Lost Items" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblLostItems" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #C62828;"/>
+                        <Label text="LOST" style="-fx-text-fill: #C62828; -fx-font-size: 11px;"/>
+                    </VBox>
+                    <VBox maxWidth="1.7976931348623157E308" prefWidth="210" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 16; -fx-effect: dropshadow(gaussian,#0001,6,0,0,2);">
+                        <Label text="Found Items" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblFoundItems" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+                        <Label text="FOUND" style="-fx-text-fill: #2E7D32; -fx-font-size: 11px;"/>
+                    </VBox>
+                    <VBox maxWidth="1.7976931348623157E308" prefWidth="210" HBox.hgrow="ALWAYS"
+                          style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 16; -fx-effect: dropshadow(gaussian,#0001,6,0,0,2);">
+                        <Label text="Pending Claims" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblPendingClaims" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #F57F17;"/>
+                        <Label text="CLAIMS" style="-fx-text-fill: #F57F17; -fx-font-size: 11px;"/>
+                    </VBox>
+                    <Button text="Refresh" onAction="#handleRefresh"
+                            style="-fx-background-color: #1A1A2E; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;"/>
+                </HBox>
+
+                <VBox spacing="10"
+                      style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20; -fx-effect: dropshadow(gaussian,#0001,8,0,0,2);">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label text="Item Monitoring"
+                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A1A2E;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="itemSearch" promptText="Search items..." prefWidth="190"
+                                   style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #DDD; -fx-padding: 6 10 6 10;"/>
+                        <ComboBox fx:id="typeFilter" prefWidth="130" style="-fx-background-radius: 6;"/>
+                        <ComboBox fx:id="dateFilter" prefWidth="150" style="-fx-background-radius: 6;"/>
+                        <DatePicker fx:id="monthPicker" prefWidth="140" promptText="Select month"/>
+                    </HBox>
+                    <TableView fx:id="itemTable" prefHeight="460">
+                        <columns>
+                            <TableColumn fx:id="colTrackingId" text="Tracking ID" prefWidth="100"/>
+                            <TableColumn fx:id="colStatus" text="Status" prefWidth="90"/>
+                            <TableColumn fx:id="colItemName" text="Item Name" prefWidth="150"/>
+                            <TableColumn fx:id="colCategory" text="Category" prefWidth="120"/>
+                            <TableColumn fx:id="colDate" text="Date" prefWidth="110"/>
+                            <TableColumn fx:id="colLocation" text="Location" prefWidth="150"/>
+                            <TableColumn fx:id="colReportedBy" text="Reported By" prefWidth="150"/>
+                            <TableColumn fx:id="colContact" text="Contact" prefWidth="150"/>
+                            <TableColumn fx:id="colDescription" text="Description" prefWidth="260"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No item records found." style="-fx-text-fill: #999;"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

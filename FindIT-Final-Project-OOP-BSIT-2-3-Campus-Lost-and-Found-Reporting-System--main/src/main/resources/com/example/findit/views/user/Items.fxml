@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #F4F4F6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.user.ItemsController">
+   
+   <left>
+      <fx:include source="DashboardSidebar.fxml" />
+   </left>
+   
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #800000;" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Items" textFill="#ffcc00">
+                     <font><Font name="System Bold" size="26.0" /></font>
+                     <HBox.margin><Insets /></HBox.margin>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="30.0" />
+               </padding>
+            </HBox>
+         </top>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+               <padding><Insets bottom="25.0" left="30.0" right="30.0" top="25.0" /></padding>
+               <children>
+                  
+                  <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 8, 0, 0, 4); -fx-padding: 15 20 15 20;">
+                     <children>
+                        <TextField fx:id="searchField" prefHeight="40.0" prefWidth="280.0" promptText="Search items ..." style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                        <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="240.0" promptText="All Categories" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                        <ComboBox fx:id="statusFilter" prefHeight="40.0" prefWidth="240.0" promptText="All Status" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                        
+                        <Region HBox.hgrow="ALWAYS" />
+                        
+                        <Button mnemonicParsing="false" onAction="#handleManageItem" prefHeight="40.0" style="-fx-background-color: transparent; -fx-border-color: #800000; -fx-text-fill: #800000; -fx-border-radius: 8; -fx-border-width: 2; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 0 20 0 20;" text="Manage Items" />
+                     </children>
+                  </HBox>
+                  
+                  <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                     <content>
+                        <GridPane fx:id="itemsGrid" hgap="20.0" vgap="25.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="210.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="210.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

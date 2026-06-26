@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.user.HelpController"> <left>
+        <fx:include source="DashboardSidebar.fxml" />
+    </left>
+   <center>
+      <VBox alignment="CENTER" spacing="40.0" style="-fx-background-color: #F4F4F6;" BorderPane.alignment="CENTER">
+         <padding><Insets bottom="60.0" left="40.0" right="40.0" top="60.0" /></padding>
+         <children>
+            <VBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Label text="How to Use FindIT?" textFill="#800000">
+                     <font><Font name="System Bold" size="36.0" /></font>
+                  </Label>
+                  <Label text="Lost something on campus? Found someone's belongings? Here's how our system works." textAlignment="CENTER" textFill="#444444" wrapText="true">
+                     <font><Font size="18.0" /></font>
+                  </Label>
+               </children>
+            </VBox>
+
+            <HBox alignment="CENTER" spacing="25.0">
+               <children>
+                  <VBox alignment="TOP_CENTER" prefWidth="280.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                     <padding><Insets bottom="30.0" left="20.0" right="20.0" top="30.0" /></padding>
+                     <children>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#800000" radius="25.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <ImageView fitHeight="37.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/search.png" />
+                                 </image>
+                                 <effect>
+                                    <ColorAdjust brightness="1.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#FFCC00" radius="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Label text="1" textFill="MAROON">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                        <Label text="Search for Your Lost Item" textAlignment="CENTER" wrapText="true"><font><Font name="System Bold" size="16.0" /></font></Label>
+                        <Label text="Browse our database of found items to see if someone has turned in your lost item" textAlignment="CENTER" textFill="#666666" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefWidth="280.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                     <padding><Insets bottom="30.0" left="20.0" right="20.0" top="30.0" /></padding>
+                     <children>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#800000" radius="25.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/report.png" />
+                                 </image>
+                                 <effect>
+                                    <ColorAdjust brightness="1.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#FFCC00" radius="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Label text="2" textFill="MAROON">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                        <Label text="Report Your Lost Item" textAlignment="CENTER" wrapText="true"><font><Font name="System Bold" size="16.0" /></font></Label>
+                        <Label text="If you can't find your item, submit a lost item report with detailed description" textAlignment="CENTER" textFill="#666666" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefWidth="280.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                     <padding><Insets bottom="30.0" left="20.0" right="20.0" top="30.0" /></padding>
+                     <children>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#800000" radius="25.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <ImageView fitHeight="37.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/claim.png" />
+                                 </image>
+                                 <effect>
+                                    <ColorAdjust brightness="1.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                        <StackPane>
+                           <children>
+                              <Circle fill="#FFCC00" radius="12.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                              <Label text="3" textFill="MAROON">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </StackPane>
+                        <Label text="Claim Your Item" textAlignment="CENTER" wrapText="true"><font><Font name="System Bold" size="16.0" /></font></Label>
+                        <Label text="Visit the Lost &amp; Found office with valid ID to verify ownership and claim your item" textAlignment="CENTER" textFill="#666666" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

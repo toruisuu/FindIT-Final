@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #F5F5F7;" stylesheets="@../../styles/admin-claims.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.admin.ClaimsController">
+   
+   <left>
+      <fx:include fx:id="sidebar" source="AdminDashboardSidebar.fxml" />
+   </left>
+   
+   <center>
+      <ScrollPane fx:id="contentScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="claims-content-scroll" vbarPolicy="AS_NEEDED" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="contentContainer" minWidth="760.0">
+               <children>
+                  <!-- HEADER -->
+                  <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: #800000;">
+                     <children>
+                        <Label text="Claim Requests" textFill="#FFCC00">
+                           <font><Font name="System Bold" size="26.0" /></font>
+                           <HBox.margin><Insets left="30.0" /></HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  
+                  <VBox spacing="20.0" VBox.vgrow="ALWAYS">
+                     <padding><Insets bottom="25.0" left="30.0" right="30.0" top="25.0" /></padding>
+                     <children>
+                        
+                        <!-- FILTER BAR -->
+                        <HBox alignment="CENTER_LEFT" prefHeight="75.0" spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 8, 0, 0, 4);">
+                           <padding><Insets left="20.0" right="20.0" /></padding>
+                           <children>
+                              <TextField fx:id="searchField" prefHeight="38.0" promptText="Search claims ..." style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="statusFilter" prefHeight="38.0" prefWidth="200.0" promptText="All Status" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                              <ComboBox fx:id="viewToggle" prefHeight="38.0" prefWidth="200.0" promptText="View Records" style="-fx-background-color: #FFFFFF; -fx-border-color: #CCCCCC; -fx-border-radius: 8;" />
+                           </children>
+                        </HBox>
+                        
+                        <!-- TABLE CONTAINER -->
+                        <VBox style="-fx-background-color: #FFFFFF; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                           <children>
+                              <TableView fx:id="claimsTable" styleClass="claims-table" VBox.vgrow="ALWAYS">
+                                <columns>
+                                  <TableColumn fx:id="colItemName" minWidth="100.0" prefWidth="160.0" text="Item Name" />
+                                  <TableColumn fx:id="colDate" minWidth="90.0" prefWidth="120.0" text="Date" />
+                                  <TableColumn fx:id="colClaimant" minWidth="100.0" prefWidth="150.0" text="Claimant" />
+                                  <TableColumn fx:id="colStatus" minWidth="100.0" prefWidth="140.0" text="Status" />
+                                  <TableColumn fx:id="colAction" maxWidth="187.0" minWidth="120.0" prefWidth="140.0" text="Action" />
+                                </columns>
+                                 <VBox.margin><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></VBox.margin>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

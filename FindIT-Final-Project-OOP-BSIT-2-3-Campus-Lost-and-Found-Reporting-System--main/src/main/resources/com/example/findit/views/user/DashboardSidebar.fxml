@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="sidebarContainer" prefWidth="220.0" style="-fx-background-color: #800000;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.findit.controllers.user.UserSidebarController">
+    <children>
+        <HBox fx:id="headerBox" alignment="CENTER_LEFT" prefHeight="80.0" spacing="10.0">
+            <padding>
+                <Insets left="15.0" right="10.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="logoImage" fitHeight="45.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../assets/LogoRed.png" />
+                    </image>
+                    <effect>
+                        <ColorAdjust brightness="0.01" />
+                    </effect>
+                </ImageView>
+                <Label fx:id="logoText" text="findIT" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+
+                <Region fx:id="headerSpacer" HBox.hgrow="ALWAYS" />
+
+                <Button fx:id="btnToggleSidebar" mnemonicParsing="false" onAction="#toggleSidebar" style="-fx-background-color: transparent; -fx-cursor: hand;" text="≡" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="22.0" />
+                    </font>
+                </Button>
+            </children>
+        </HBox>
+
+        <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets top="10.0" />
+            </padding>
+            <children>
+                <Button fx:id="btnNavDashboard" alignment="CENTER_LEFT" contentDisplay="LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#goToDashboard" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-cursor: hand;" text="Dashboard">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fx:id="imgNavDashboard" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../assets/dashboard.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnNavItems" alignment="CENTER_LEFT" contentDisplay="LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#goToItems" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-cursor: hand;" text="Item History">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fx:id="imgNavItems" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../assets/items.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="btnNavClaims" alignment="CENTER_LEFT" contentDisplay="LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#goToClaims" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-cursor: hand;" text="Claim Request">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fx:id="imgNavClaims" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../assets/reportsidebar.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnNavHelp" alignment="CENTER_LEFT" contentDisplay="LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#goToHelpPage" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-cursor: hand;" text="Help">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fx:id="imgNavHelp" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../assets/help.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </VBox>
+
+        <VBox alignment="BOTTOM_LEFT" spacing="10.0">
+            <padding>
+                <Insets bottom="30.0" />
+            </padding>
+            <children>
+                <Button fx:id="btnLogout" alignment="CENTER_LEFT" contentDisplay="LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#logout" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-cursor: hand;" text="Exit">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fx:id="imgLogout" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../assets/logout.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </VBox>
+    </children>
+</VBox>
