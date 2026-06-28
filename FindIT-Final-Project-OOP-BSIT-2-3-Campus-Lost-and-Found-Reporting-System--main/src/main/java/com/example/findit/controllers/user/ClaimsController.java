@@ -17,6 +17,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -271,7 +272,10 @@ public class ClaimsController {
         grid.add(new javafx.scene.control.Label("Contact Info:"), 0, 0); grid.add(contactField, 1, 0);
         grid.add(new javafx.scene.control.Label("Proof Details:"), 0, 1); grid.add(proofArea, 1, 1);
         
-        dialog.getDialogPane().setContent(grid);
+        VBox content = new VBox(16);
+        content.getChildren().addAll(createClaimTimeline(claim), grid);
+        dialog.getDialogPane().setPrefWidth(620);
+        dialog.getDialogPane().setContent(content);
 
         // Add Action Buttons
         javafx.scene.control.ButtonType saveBtn = new javafx.scene.control.ButtonType("Save Changes", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
@@ -293,5 +297,83 @@ public class ClaimsController {
                 com.example.findit.util.toast.show(window, "Claim withdrawn permanently.", "warning");
             }
         });
+    }
+
+    private VBox createClaimTimeline(ClaimRequest claim) {
+        String status = safe(claim.getStatus());
+        boolean approved = "Approved".equalsIgnoreCase(status);
+        boolean rejected = "Rejected".equalsIgnoreCase(status);
+        boolean pending  = !approved && !rejected;
+
+        Label title = new Label("Claim Timeline");
+        title.setStyle("-fx-text-fill: #4A1212; -fx-font-weight: bold; -fx-font-size: 13;");
+
+        // Step 3 appearance depends on outcome
+        String step3Label  = rejected ? "Rejected Claim" : "Approved Claim";
+        boolean step3Done  = approved || rejected;
+
+        HBox timeline = new HBox(10);
+        timeline.setAlignment(Pos.CENTER_LEFT);
+        timeline.getChildren().addAll(
+                createTimelineStep("1", "Submitted Claim", true,  false,   false),
+                createTimelineConnector(true),
+                createTimelineStep("2", "Pending Review",  true,  pending, false),
+                createTimelineConnector(step3Done),
+                createTimelineStep("3", step3Label,        step3Done, step3Done, rejected)
+        );
+
+        VBox wrapper = new VBox(8, title, timeline);
+        wrapper.setPadding(new Insets(12));
+        wrapper.setStyle("-fx-background-color: #F7F7F9; -fx-background-radius: 10;");
+        return wrapper;
+    }
+
+    /**
+     * @param number   step number text
+     * @param text     label below the circle
+     * @param complete whether the step has been reached
+     * @param current  whether this is the active step (bold label)
+     * @param isRejected whether this step represents a rejection (red styling)
+     */
+    private VBox createTimelineStep(String number, String text,
+                                    boolean complete, boolean current, boolean isRejected) {
+        Label marker = new Label(complete ? number : "");
+        marker.setAlignment(Pos.CENTER);
+        marker.setMinSize(28, 28);
+        marker.setPrefSize(28, 28);
+        marker.setMaxSize(28, 28);
+
+        String markerColor = !complete  ? "#D8D8D8"
+                           : isRejected ? "#C62828"
+                           :              "#800000";
+        marker.setStyle(complete
+                ? "-fx-background-color: " + markerColor + "; -fx-background-radius: 14; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;"
+                : "-fx-background-color: " + markerColor + "; -fx-background-radius: 14;");
+
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(130);
+        if (current && isRejected) {
+            label.setStyle("-fx-text-fill: #C62828; -fx-font-weight: bold;");
+        } else if (current) {
+            label.setStyle("-fx-text-fill: #800000; -fx-font-weight: bold;");
+        } else {
+            label.setStyle("-fx-text-fill: #555555;");
+        }
+
+        VBox step = new VBox(6, marker, label);
+        step.setAlignment(Pos.TOP_CENTER);
+        step.setPrefWidth(135);
+        return step;
+    }
+
+    private Region createTimelineConnector(boolean complete) {
+        Region connector = new Region();
+        connector.setPrefSize(48, 3);
+        connector.setMaxHeight(3);
+        connector.setStyle(complete
+                ? "-fx-background-color: #800000; -fx-background-radius: 2;"
+                : "-fx-background-color: #D8D8D8; -fx-background-radius: 2;");
+        return connector;
     }
 }
